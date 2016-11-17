@@ -343,6 +343,11 @@ function toggleCodeBlock(editor) {
 		});
 	}
 
+	if (!editor.options.isMarkdown) {
+		_replaceSelection(editor.codemirror, false, ["<code>", "</code>"]);
+		return;
+	}
+
 	var cm = editor.codemirror,
 		cur_start = cm.getCursor("start"),
 		cur_end = cm.getCursor("end"),
@@ -561,7 +566,7 @@ function toggleCodeBlock(editor) {
  */
 function toggleBlockquote(editor) {
 	var cm = editor.codemirror;
-	_toggleLine(cm, "quote");
+	_toggleLine(cm, "quote", editor.options.isMarkdown);
 }
 
 /**
@@ -610,7 +615,7 @@ function toggleHeading3(editor) {
  */
 function toggleUnorderedList(editor) {
 	var cm = editor.codemirror;
-	_toggleLine(cm, "unordered-list");
+	_toggleLine(cm, "unordered-list", editor.options.isMarkdown);
 }
 
 
@@ -619,7 +624,7 @@ function toggleUnorderedList(editor) {
  */
 function toggleOrderedList(editor) {
 	var cm = editor.codemirror;
-	_toggleLine(cm, "ordered-list");
+	_toggleLine(cm, "ordered-list", editor.options.isMarkdown);
 }
 
 /**
@@ -912,9 +917,72 @@ function _toggleHeading(cm, direction, size) {
 }
 
 
-function _toggleLine(cm, name) {
+function _toggleLine(cm, name, isMarkdown) {
 	if(/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
 		return;
+
+	if (!isMarkdown) {
+		if (name === 'quote') {
+			_replaceSelection(cm, false, ["<quoteblock>", "</quoteblock>"]);
+		}
+		else if (name.indexOf('-list') !== -1) {
+
+			var startPoint = cm.getCursor("start");
+			var endPoint = cm.getCursor("end");
+
+			if (startPoint.line == endPoint.line) {
+				var i = startPoint.line;
+				var text = cm.getLine(i), match;
+				if (match = text.match(/<li>(.*?)<\/li>/i)) {
+					text = match[1];
+				}
+				else {
+					text = "<li>" + text + "</li>";
+				}
+				cm.replaceRange(text, {
+					line: i,
+					ch: 0
+				}, {
+					line: i,
+					ch: 99999999999999
+				});
+
+				cm.setSelection(startPoint, endPoint);
+			}
+			else {
+				for(var i = startPoint.line; i <= endPoint.line; i++) {
+					(function(i) {
+						var text = cm.getLine(i), match;
+						if (match = text.match(/<li>(.*?)<\/li>/i)) {
+							text = "\t"  + text;
+						}
+						else {
+							text = "\t<li>" + text + "</li>";
+						}
+						cm.replaceRange(text, {
+							line: i,
+							ch: 0
+						}, {
+							line: i,
+							ch: 99999999999999
+						});
+					})(i);
+				}
+				// insert ul,ol
+
+				var map = {
+					"unordered-list": "ul",
+					"ordered-list": "ol"
+				};
+				var tag = map[name];
+				cm.replaceRange("\n</" + tag + ">\n", CodeMirror.Pos(endPoint.line));
+				cm.replaceRange("<" + tag + ">\n", {line: startPoint.line, ch: 0});
+			}
+		}
+
+		cm.focus();
+		return;
+	}
 
 	var stat = getState(cm);
 	var startPoint = cm.getCursor("start");
