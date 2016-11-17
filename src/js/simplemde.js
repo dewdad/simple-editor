@@ -96,7 +96,7 @@ function fixShortcut(name) {
  */
 function createIcon(options, enableTooltips, shortcuts) {
 	options = options || {};
-	options.type = (options.type == undefined) ? 'a' : options.type;
+	options.type = (options.type == undefined) ? "a" : options.type;
 	enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
 	var el = document.createElement(options.type);
@@ -113,7 +113,7 @@ function createIcon(options, enableTooltips, shortcuts) {
 	el.tabIndex = -1;
 	el.className = options.className;
 
-	if (options.buttonTitle) {
+	if(options.buttonTitle) {
 		var text = document.createTextNode(options.buttonTitle);
 		el.appendChild(text);
 	}
@@ -121,16 +121,16 @@ function createIcon(options, enableTooltips, shortcuts) {
 	return el;
 }
 
-function createSep() {
-	var el = document.createElement("i");
-	el.className = "separator";
-	el.innerHTML = "|";
-	return el;
-}
+// function createSep() {
+// 	var el = document.createElement("i");
+// 	el.className = "separator";
+// 	el.innerHTML = "|";
+// 	return el;
+// }
 
 function createDivider() {
 	var el = document.createElement("div");
-	el.className = 'dropdown-divider';
+	el.className = "dropdown-divider";
 	return el;
 }
 
@@ -249,8 +249,8 @@ function toggleHtmlBlock(editor, type, start_char, end_char) {
  * Action for toggling bold.
  */
 function toggleBold(editor) {
-	var start_char = editor.options.isMarkdown ? editor.options.blockStyles.bold : '<strong>';
-	var end_char = editor.options.isMarkdown ? editor.options.blockStyles.bold : '</strong>';
+	var start_char = editor.options.isMarkdown ? editor.options.blockStyles.bold : "<strong>";
+	var end_char = editor.options.isMarkdown ? editor.options.blockStyles.bold : "</strong>";
 	_toggleBlock(editor, "bold", start_char, end_char);
 }
 
@@ -259,8 +259,8 @@ function toggleBold(editor) {
  * Action for toggling italic.
  */
 function toggleItalic(editor) {
-	var start_char = editor.options.isMarkdown ? editor.options.blockStyles.italic : '<em>';
-	var end_char = editor.options.isMarkdown ? editor.options.blockStyles.italic : '</em>';
+	var start_char = editor.options.isMarkdown ? editor.options.blockStyles.italic : "<em>";
+	var end_char = editor.options.isMarkdown ? editor.options.blockStyles.italic : "</em>";
 	_toggleBlock(editor, "italic", start_char, end_char);
 }
 
@@ -269,8 +269,8 @@ function toggleItalic(editor) {
  * Action for toggling strikethrough.
  */
 function toggleStrikethrough(editor) {
-	var start_char = editor.options.isMarkdown ? '~~' : '<s>';
-	var end_char = editor.options.isMarkdown ? '~~' : '</s>';
+	var start_char = editor.options.isMarkdown ? "~~" : "<s>";
+	var end_char = editor.options.isMarkdown ? "~~" : "</s>";
 	_toggleBlock(editor, "strikethrough", start_char, end_char);
 }
 
@@ -347,7 +347,7 @@ function toggleCodeBlock(editor) {
 		});
 	}
 
-	if (!editor.options.isMarkdown) {
+	if(!editor.options.isMarkdown) {
 		_replaceSelection(editor.codemirror, false, ["<code>", "</code>"]);
 		return;
 	}
@@ -650,11 +650,10 @@ function drawLink(editor) {
 	var isUrl = false;
 
 	var text = _getSelectedText(cm, false);
-	if (_isUrl(text)) {
+	if(_isUrl(text)) {
 		url = text;
 		isUrl = true;
-	}
-	else {
+	} else {
 		if(options.promptURLs) {
 			url = prompt(options.promptTexts.link);
 			if(!url) {
@@ -663,24 +662,35 @@ function drawLink(editor) {
 		}
 	}
 
-	if (!options.isMarkdown) {
-		var links = ['<a href="', url, '" title="">', text, '</a>'];
-		cm.replaceSelection(links.join(''));
+	if(!options.isMarkdown) {
+		var links = ["<a href=\"", url, "\" title=\"\">", text, "</a>"];
+		cm.replaceSelection(links.join(""));
 
 		var startPoint = cm.getCursor("start");
 		var line = startPoint.line;
+		var offset = 0;
 
-		if (isUrl) {
-			var offset = startPoint.ch - (links[3].length + links[4].length);
-			cm.setSelection({line: line, ch: offset}, {line: line, ch: (offset + text.length)});
-		}
-		else {
-			var offset = startPoint.ch - (links[1].length + links[2].length + links[3].length + links[4].length);
-			cm.setSelection({line: line, ch: offset}, {line: line, ch: (offset + url.length)});
+		if(isUrl) {
+			offset = startPoint.ch - (links[3].length + links[4].length);
+			cm.setSelection({
+				line: line,
+				ch: offset
+			}, {
+				line: line,
+				ch: (offset + text.length)
+			});
+		} else {
+			offset = startPoint.ch - (links[1].length + links[2].length + links[3].length + links[4].length);
+			cm.setSelection({
+				line: line,
+				ch: offset
+			}, {
+				line: line,
+				ch: (offset + url.length)
+			});
 		}
 		cm.focus();
-	}
-	else {
+	} else {
 		_replaceSelection(cm, stat.link, options.insertTexts.link, url);
 	}
 }
@@ -700,19 +710,24 @@ function drawImage(editor) {
 		}
 	}
 
-	if (!options.isMarkdown) {
+	if(!options.isMarkdown) {
 		var text = _getSelectedText(cm, false);
-		var links = ['<img src="', text, '" title="">'];
-		cm.replaceSelection(links.join(''));
+		var links = ["<img src=\"", text, "\" title=\"\">"];
+		cm.replaceSelection(links.join(""));
 
 		var startPoint = cm.getCursor("start");
 		var line = startPoint.line;
 		var offset = startPoint.ch - (links[1].length + links[2].length);
 
-		cm.setSelection({line: line, ch: offset}, {line: line, ch: (offset + text.length)});
+		cm.setSelection({
+			line: line,
+			ch: offset
+		}, {
+			line: line,
+			ch: (offset + text.length)
+		});
 		cm.focus();
-	}
-	else {
+	} else {
 		_replaceSelection(cm, stat.image, options.insertTexts.image, url);
 	}
 }
@@ -724,13 +739,18 @@ function drawTable(editor) {
 	var cm = editor.codemirror;
 	var stat = getState(cm);
 	var options = editor.options;
-	if (!options.isMarkdown) {
+	if(!options.isMarkdown) {
 		var point = cm.getCursor("end");
-		cm.replaceRange(options.insertMarkups.table, {line: point.line, ch: point.ch});
-		cm.setSelection({line: point.line, ch: point.ch});
+		cm.replaceRange(options.insertMarkups.table, {
+			line: point.line,
+			ch: point.ch
+		});
+		cm.setSelection({
+			line: point.line,
+			ch: point.ch
+		});
 		cm.focus();
-	}
-	else {
+	} else {
 		_replaceSelection(cm, stat.table, options.insertTexts.table);
 	}
 }
@@ -742,13 +762,18 @@ function drawHorizontalRule(editor) {
 	var cm = editor.codemirror;
 	var stat = getState(cm);
 	var options = editor.options;
-	if (!options.isMarkdown) {
+	if(!options.isMarkdown) {
 		var point = cm.getCursor("end");
-		cm.replaceRange(options.insertMarkups.hr, {line: point.line, ch: point.ch});
-		cm.setSelection({line: point.line, ch: point.ch});
+		cm.replaceRange(options.insertMarkups.hr, {
+			line: point.line,
+			ch: point.ch
+		});
+		cm.setSelection({
+			line: point.line,
+			ch: point.ch
+		});
 		cm.focus();
-	}
-	else {
+	} else {
 		_replaceSelection(cm, stat.image, options.insertTexts.horizontalRule);
 	}
 }
@@ -912,7 +937,7 @@ function _replaceSelection(cm, active, startEnd, url) {
 }
 
 
-function _toggleHeading(cm, direction, size) {
+function _toggleHeading(cm, direction, size, isMarkdown) {
 	if(/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
 		return;
 
@@ -922,25 +947,23 @@ function _toggleHeading(cm, direction, size) {
 	for(var i = startPoint.line; i <= endPoint.line; i++) {
 		(function(i) {
 			var text = cm.getLine(i);
+			var currHeadingLevel;
 
-			if (!isMarkdown) {
-				var currHeadingLevel, match;
+			if(!isMarkdown) {
 				var re = /<h([1-6])+>(.*?)<\/h([1-6])+>/i;
-
-				if (match = text.match(re)) {
-					if (match[1] == match[3]) {
+				var match = text.match(re);
+				if(match.length >= 4) {
+					if(match[1] == match[3]) {
 						currHeadingLevel = parseInt(match[1], 10) + 1;
 						currHeadingLevel = currHeadingLevel > 6 ? 1 : currHeadingLevel;
-						text = text.replace(re, '<h'+ currHeadingLevel + '>$2</h'+ currHeadingLevel + '>');
+						text = text.replace(re, "<h" + currHeadingLevel + ">$2</h" + currHeadingLevel + ">");
+					} else {
+						currHeadingLevel = 1;
+						text = "<h" + currHeadingLevel + ">" + text + "</h" + currHeadingLevel + ">";
 					}
-					else {
-						var currHeadingLevel = 1;
-						text = '<h'+ currHeadingLevel + '>' + text + '</h'+ currHeadingLevel + '>';
-					}
-				}
-				else {
+				} else {
 					currHeadingLevel = 1;
-					text = '<h'+ currHeadingLevel + '>' + text + '</h'+ currHeadingLevel + '>';
+					text = "<h" + currHeadingLevel + ">" + text + "</h" + currHeadingLevel + ">";
 				}
 
 				cm.replaceRange(text, {
@@ -954,7 +977,7 @@ function _toggleHeading(cm, direction, size) {
 				return;
 			}
 
-			var currHeadingLevel = text.search(/[^#]/);
+			currHeadingLevel = text.search(/[^#]/);
 
 			if(direction !== undefined) {
 				if(currHeadingLevel <= 0) {
@@ -1019,63 +1042,67 @@ function _toggleLine(cm, name, isMarkdown) {
 	if(/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
 		return;
 
-	if (!isMarkdown) {
-		if (name === 'quote') {
+	if(!isMarkdown) {
+		if(name === "quote") {
 			_replaceSelection(cm, false, ["<quoteblock>", "</quoteblock>"]);
-		}
-		else if (name.indexOf('-list') !== -1) {
+		} else if(name.indexOf("-list") !== -1) {
 
-			var startPoint = cm.getCursor("start");
-			var endPoint = cm.getCursor("end");
+			(function() {
+				var startPoint = cm.getCursor("start");
+				var endPoint = cm.getCursor("end");
 
-			if (startPoint.line == endPoint.line) {
-				var i = startPoint.line;
-				var text = cm.getLine(i), match;
-				if (match = text.match(/<li>(.*?)<\/li>/i)) {
-					text = match[1];
+				if(startPoint.line == endPoint.line) {
+					var line = startPoint.line;
+					var text = cm.getLine(line);
+					var match = text.match(/<li>(.*?)<\/li>/i);
+					if(match.length >= 2) {
+						text = match[1];
+					} else {
+						text = "<li>" + text + "</li>";
+					}
+					cm.replaceRange(text, {
+						line: line,
+						ch: 0
+					}, {
+						line: line,
+						ch: 99999999999999
+					});
+
+					cm.setSelection(startPoint, endPoint);
+				} else {
+					for(var i = startPoint.line; i <= endPoint.line; i++) {
+						(function(i) {
+							var text = cm.getLine(i);
+							var match = text.match(/<li>(.*?)<\/li>/i);
+							if(match) {
+								text = "\t" + text;
+							} else {
+								text = "\t<li>" + text + "</li>";
+							}
+							cm.replaceRange(text, {
+								line: i,
+								ch: 0
+							}, {
+								line: i,
+								ch: 99999999999999
+							});
+						})(i);
+					}
+					// insert ul,ol
+
+					var map = {
+						"unordered-list": "ul",
+						"ordered-list": "ol"
+					};
+					var tag = map[name];
+					cm.replaceRange("\n</" + tag + ">\n", CodeMirror.Pos(endPoint.line));
+					cm.replaceRange("<" + tag + ">\n", {
+						line: startPoint.line,
+						ch: 0
+					});
 				}
-				else {
-					text = "<li>" + text + "</li>";
-				}
-				cm.replaceRange(text, {
-					line: i,
-					ch: 0
-				}, {
-					line: i,
-					ch: 99999999999999
-				});
+			})();
 
-				cm.setSelection(startPoint, endPoint);
-			}
-			else {
-				for(var i = startPoint.line; i <= endPoint.line; i++) {
-					(function(i) {
-						var text = cm.getLine(i), match;
-						if (match = text.match(/<li>(.*?)<\/li>/i)) {
-							text = "\t"  + text;
-						}
-						else {
-							text = "\t<li>" + text + "</li>";
-						}
-						cm.replaceRange(text, {
-							line: i,
-							ch: 0
-						}, {
-							line: i,
-							ch: 99999999999999
-						});
-					})(i);
-				}
-				// insert ul,ol
-
-				var map = {
-					"unordered-list": "ul",
-					"ordered-list": "ol"
-				};
-				var tag = map[name];
-				cm.replaceRange("\n</" + tag + ">\n", CodeMirror.Pos(endPoint.line));
-				cm.replaceRange("<" + tag + ">\n", {line: startPoint.line, ch: 0});
-			}
 		}
 
 		cm.focus();
@@ -1207,19 +1234,25 @@ function _cleanBlock(cm) {
 }
 
 function _isUrl(url) {
-	 var re =/^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
-	 if (re.test(url)) {
-		 return true;
-	 }
-	 return false;
+	var re = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+	if(re.test(url)) {
+		return true;
+	}
+	return false;
 }
 
 function _getSelectedText(cm, selectLine) {
 	var text = cm.getSelection();
-	if (text === '' && selectLine === true) {
+	if(text === "" && selectLine === true) {
 		var startPoint = cm.getCursor("start");
 		text = cm.getLine(startPoint.line);
-		cm.setSelection({line: startPoint.line, ch: 0}, {line: startPoint.line, ch: text.length});
+		cm.setSelection({
+			line: startPoint.line,
+			ch: 0
+		}, {
+			line: startPoint.line,
+			ch: text.length
+		});
 	}
 	return text;
 }
@@ -1473,7 +1506,7 @@ function SimpleMDE(options) {
 	// Used later to refer to it"s parent
 	options.parent = this;
 
-	options.isMarkdown = (options.mode == undefined || options.mode == 'markdown') ? true : false;
+	options.isMarkdown = (options.mode == undefined || options.mode == "markdown") ? true : false;
 
 	// Check if Font Awesome needs to be auto downloaded
 	var autoDownloadFA = true;
@@ -1875,33 +1908,44 @@ SimpleMDE.prototype.createToolbar = function(items) {
 	var toolbarData = {};
 	self.toolbar = items;
 
-	for (var index in items) {
+	for(var index in items) {
+
+		if(items[index].name == "guide" && self.options.toolbarGuideIcon === false)
+			continue;
+
+		if(self.options.hideIcons && self.options.hideIcons.indexOf(items[index].name) != -1)
+			continue;
+
+		// Fullscreen does not work well on mobile devices (even tablets)
+		// In the future, hopefully this can be resolved
+		if((items[index].name == "fullscreen" || items[index].name == "side-by-side") && isMobile())
+			continue;
+
 		(function(item) {
 
-			var buttonGroup = document.createElement('div');
-			if (item.title && self.options.toolbarTips) {
+			var buttonGroup = document.createElement("div");
+			if(item.title && self.options.toolbarTips) {
 				buttonGroup.title = createTootlip(item.title, null, null);
 			}
 			buttonGroup.tabIndex = -1;
-			buttonGroup.className = 'btn-group';
+			buttonGroup.className = "btn-group";
 
-			if (Array.isArray(item)) {
+			if(Array.isArray(item)) {
 
-				for (var i in item) {
+				for(var i in item) {
 
 					(function(subItem) {
-						subItem.className = 'btn ' + subItem.className;
+						subItem.className = "btn " + subItem.className;
 						var el = createIcon(subItem, self.options.toolbarTips, self.options.shortcuts);
 
 						// bind events, special for info
-						if (subItem.action) {
+						if(subItem.action) {
 							if(typeof subItem.action === "function") {
 								el.onclick = function(e) {
 									e.preventDefault();
 									subItem.action(self);
 								};
-							}
-							else if(typeof subItem.action === "string") {
+							} else if(typeof subItem.action === "string") {
 								el.href = subItem.action;
 								el.target = "_blank";
 							}
@@ -1912,42 +1956,39 @@ SimpleMDE.prototype.createToolbar = function(items) {
 
 					})(toolbarBuiltInButtons[item[i]]);
 				}
-			}
-			else if (item['dropdown'] !== undefined) {
+			} else if(item["dropdown"] !== undefined) {
 				// dropdown button
-				item.type = 'button';
-				item.className = 'btn dropdown-toggle ' + item.className;
+				item.type = "button";
+				item.className = "btn dropdown-toggle " + item.className;
 				var dropdownGroup = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
 
-				var attr = document.createAttribute('data-toggle');
-				attr.value = 'dropdown';
+				var attr = document.createAttribute("data-toggle");
+				attr.value = "dropdown";
 				dropdownGroup.setAttributeNode(attr);
 				buttonGroup.appendChild(dropdownGroup);
 
 				// create doopdown
-				var dropdown = document.createElement('div');
-				dropdown.className = 'dropdown-menu';
+				var dropdown = document.createElement("div");
+				dropdown.className = "dropdown-menu";
 
-				for (var subIndex in item['dropdown']) {
+				for(var subIndex in item["dropdown"]) {
 					(function(subItem) {
 
 						var el;
-						if (subItem === '-' || subItem === '|') {
+						if(subItem === "-" || subItem === "|") {
 							el = createDivider();
-						}
-						else {
-							subItem.className = subItem.className == '' ? 'dropdown-item' : subItem.className + ' dropdown-item';
+						} else {
+							subItem.className = subItem.className == "" ? "dropdown-item" : subItem.className + " dropdown-item";
 							el = createIcon(subItem, self.options.toolbarTips, self.options.shortcuts);
 
 							// bind events, special for info
 							if(subItem.action) {
-								if (typeof subItem.action === "function") {
+								if(typeof subItem.action === "function") {
 									el.onclick = function(e) {
 										e.preventDefault();
 										subItem.action(self);
 									};
-								}
-								else if(typeof subItem.action === "string") {
+								} else if(typeof subItem.action === "string") {
 									el.href = subItem.action;
 									el.target = "_blank";
 								}
@@ -1957,25 +1998,23 @@ SimpleMDE.prototype.createToolbar = function(items) {
 						toolbarData[subItem.name || subItem] = el;
 						dropdown.appendChild(el);
 
-					})(item['dropdown'][subIndex]);
+					})(item["dropdown"][subIndex]);
 				}
 
 				buttonGroup.appendChild(dropdown);
-			}
-			else {
+			} else {
 				// regular button
-				item.className = 'btn ' + item.className;
+				item.className = "btn " + item.className;
 				var el = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
 
 				// bind events, special for info
-				if (item.action) {
+				if(item.action) {
 					if(typeof item.action === "function") {
 						el.onclick = function(e) {
 							e.preventDefault();
 							item.action(self);
 						};
-					}
-					else if(typeof item.action === "string") {
+					} else if(typeof item.action === "string") {
 						el.href = item.action;
 						el.target = "_blank";
 					}
@@ -1989,7 +2028,6 @@ SimpleMDE.prototype.createToolbar = function(items) {
 			bar.appendChild(buttonGroup);
 
 		})(items[index]);
-
 	}
 
 	// for(i = 0; i < items.length; i++) {
@@ -2296,7 +2334,7 @@ SimpleMDE.prototype.toggleFullScreen = function() {
 };
 
 SimpleMDE.prototype.toggleHtmlBlock = function(start_tag, end_tag) {
-	toggleHtmlBlock(this, 'html', start_tag, end_tag);
+	toggleHtmlBlock(this, "html", start_tag, end_tag);
 };
 
 SimpleMDE.prototype.isPreviewActive = function() {
