@@ -241,6 +241,10 @@ function toggleFullScreen(editor) {
 }
 
 
+function toggleHtmlBlock(editor, type, start_char, end_char) {
+	_toggleBlock(editor, type, start_char, end_char);
+}
+
 /**
  * Action for toggling bold.
  */
@@ -1469,6 +1473,7 @@ function SimpleMDE(options) {
 	// Used later to refer to it"s parent
 	options.parent = this;
 
+	options.isMarkdown = (options.mode == undefined || options.mode == 'markdown') ? true : false;
 
 	// Check if Font Awesome needs to be auto downloaded
 	var autoDownloadFA = true;
@@ -2218,6 +2223,7 @@ SimpleMDE.redo = redo;
 SimpleMDE.togglePreview = togglePreview;
 SimpleMDE.toggleSideBySide = toggleSideBySide;
 SimpleMDE.toggleFullScreen = toggleFullScreen;
+SimpleMDE.toggleHtmlBlock = toggleHtmlBlock;
 
 /**
  * Bind instance methods for exports.
@@ -2287,6 +2293,10 @@ SimpleMDE.prototype.toggleSideBySide = function() {
 };
 SimpleMDE.prototype.toggleFullScreen = function() {
 	toggleFullScreen(this);
+};
+
+SimpleMDE.prototype.toggleHtmlBlock = function(start_tag, end_tag) {
+	toggleHtmlBlock(this, 'html', start_tag, end_tag);
 };
 
 SimpleMDE.prototype.isPreviewActive = function() {
