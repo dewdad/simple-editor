@@ -883,6 +883,7 @@ function _replaceSelection(cm, active, startEnd, url) {
 	var startPoint = cm.getCursor("start");
 	var endPoint = cm.getCursor("end");
 	if(url) {
+		start = start.replace("#url#", url);
 		end = end.replace("#url#", url);
 	}
 	if(active) {
