@@ -574,7 +574,7 @@ function toggleBlockquote(editor) {
  */
 function toggleHeadingSmaller(editor) {
 	var cm = editor.codemirror;
-	_toggleHeading(cm, "smaller");
+	_toggleHeading(cm, "smaller", 0, editor.options.isMarkdown);
 }
 
 /**
@@ -582,7 +582,7 @@ function toggleHeadingSmaller(editor) {
  */
 function toggleHeadingBigger(editor) {
 	var cm = editor.codemirror;
-	_toggleHeading(cm, "bigger");
+	_toggleHeading(cm, "bigger", 0, editor.options.isMarkdown);
 }
 
 /**
@@ -590,7 +590,7 @@ function toggleHeadingBigger(editor) {
  */
 function toggleHeading1(editor) {
 	var cm = editor.codemirror;
-	_toggleHeading(cm, undefined, 1);
+	_toggleHeading(cm, undefined, 1, editor.options.isMarkdown);
 }
 
 /**
@@ -598,7 +598,7 @@ function toggleHeading1(editor) {
  */
 function toggleHeading2(editor) {
 	var cm = editor.codemirror;
-	_toggleHeading(cm, undefined, 2);
+	_toggleHeading(cm, undefined, 2, editor.options.isMarkdown);
 }
 
 /**
@@ -606,7 +606,7 @@ function toggleHeading2(editor) {
  */
 function toggleHeading3(editor) {
 	var cm = editor.codemirror;
-	_toggleHeading(cm, undefined, 3);
+	_toggleHeading(cm, undefined, 3, editor.options.isMarkdown);
 }
 
 
@@ -853,9 +853,42 @@ function _toggleHeading(cm, direction, size) {
 
 	var startPoint = cm.getCursor("start");
 	var endPoint = cm.getCursor("end");
+
 	for(var i = startPoint.line; i <= endPoint.line; i++) {
 		(function(i) {
 			var text = cm.getLine(i);
+
+			if (!isMarkdown) {
+				var currHeadingLevel, match;
+				var re = /<h([1-6])+>(.*?)<\/h([1-6])+>/i;
+
+				if (match = text.match(re)) {
+					if (match[1] == match[3]) {
+						currHeadingLevel = parseInt(match[1], 10) + 1;
+						currHeadingLevel = currHeadingLevel > 6 ? 1 : currHeadingLevel;
+						text = text.replace(re, '<h'+ currHeadingLevel + '>$2</h'+ currHeadingLevel + '>');
+					}
+					else {
+						var currHeadingLevel = 1;
+						text = '<h'+ currHeadingLevel + '>' + text + '</h'+ currHeadingLevel + '>';
+					}
+				}
+				else {
+					currHeadingLevel = 1;
+					text = '<h'+ currHeadingLevel + '>' + text + '</h'+ currHeadingLevel + '>';
+				}
+
+				cm.replaceRange(text, {
+					line: i,
+					ch: 0
+				}, {
+					line: i,
+					ch: 99999999999999
+				});
+
+				return;
+			}
+
 			var currHeadingLevel = text.search(/[^#]/);
 
 			if(direction !== undefined) {
