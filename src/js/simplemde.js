@@ -720,7 +720,15 @@ function drawTable(editor) {
 	var cm = editor.codemirror;
 	var stat = getState(cm);
 	var options = editor.options;
-	_replaceSelection(cm, stat.table, options.insertTexts.table);
+	if (!options.isMarkdown) {
+		var point = cm.getCursor("end");
+		cm.replaceRange(options.insertMarkups.table, {line: point.line, ch: point.ch});
+		cm.setSelection({line: point.line, ch: point.ch});
+		cm.focus();
+	}
+	else {
+		_replaceSelection(cm, stat.table, options.insertTexts.table);
+	}
 }
 
 /**
@@ -730,7 +738,15 @@ function drawHorizontalRule(editor) {
 	var cm = editor.codemirror;
 	var stat = getState(cm);
 	var options = editor.options;
-	_replaceSelection(cm, stat.image, options.insertTexts.horizontalRule);
+	if (!options.isMarkdown) {
+		var point = cm.getCursor("end");
+		cm.replaceRange(options.insertMarkups.hr, {line: point.line, ch: point.ch});
+		cm.setSelection({line: point.line, ch: point.ch});
+		cm.focus();
+	}
+	else {
+		_replaceSelection(cm, stat.image, options.insertTexts.horizontalRule);
+	}
 }
 
 
