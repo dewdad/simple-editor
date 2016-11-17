@@ -10,6 +10,9 @@ require("codemirror/addon/display/placeholder.js");
 require("codemirror/addon/selection/mark-selection.js");
 require("codemirror/mode/gfm/gfm.js");
 require("codemirror/mode/xml/xml.js");
+require("codemirror/mode/css/css.js");
+require("codemirror/mode/htmlmixed/htmlmixed.js");
+require("codemirror/mode/javascript/javascript.js");
 var CodeMirrorSpellChecker = require("codemirror-spell-checker");
 var marked = require("marked");
 
@@ -40,7 +43,8 @@ var bindings = {
 	"undo": undo,
 	"redo": redo,
 	"toggleSideBySide": toggleSideBySide,
-	"toggleFullScreen": toggleFullScreen
+	"toggleFullScreen": toggleFullScreen,
+	"toggleMarkdown": toggleMarkdown,
 };
 
 var shortcuts = {
@@ -243,6 +247,11 @@ function toggleFullScreen(editor) {
 
 function toggleHtmlBlock(editor, type, start_char, end_char) {
 	_toggleBlock(editor, type, start_char, end_char);
+}
+
+function toggleMarkdown(editor) {
+	editor.options.isMarkdown = !editor.options.isMarkdown;
+	editor.toolbarElements["toggleMarkdown"].text = editor.options.isMarkdown ? "M↓" : "M↑";
 }
 
 /**
@@ -1474,7 +1483,18 @@ var toolbarBuiltInButtons = {
 		action: redo,
 		className: "fa fa-repeat no-disable",
 		title: "Redo"
+	},
+	"toggleMarkdown": {
+		name: "toggleMarkdown",
+		className: "",
+		title: "Toggle between Markdown / Markup mode",
+		action: toggleMarkdown
 	}
+};
+
+var insertMarkups = {
+	table: "\n<table class=\"table table-striped table-bordered table-hover table-sm\">\n<tr>\n\t<th></th>\n\t<th></th>\n\t<th></th>\n</tr>\n<tr>\n\t<td></td>\n\t<td></td>\n\t<td></td>\n</tr>\n</table>\n",
+	hr: "\n<hr>\n"
 };
 
 var insertTexts = {
@@ -1586,6 +1606,9 @@ function SimpleMDE(options) {
 		highlightFormatting: true // needed for toggleCodeBlock to detect types of code
 	}, options.parsingConfig || {});
 
+
+	// Merging the insertMarkups, with the given options
+	options.insertMarkups = extend({}, insertMarkups, options.insertMarkups || {});
 
 	// Merging the insertTexts, with the given options
 	options.insertTexts = extend({}, insertTexts, options.insertTexts || {});
@@ -1712,9 +1735,18 @@ SimpleMDE.prototype.render = function(el) {
 			codeMirrorInstance: CodeMirror
 		});
 	} else {
-		mode = options.parsingConfig;
-		mode.name = "gfm";
-		mode.gitHubSpice = false;
+		if(options.mode === "html") {
+			mode = "htmlmixed";
+		} else if(options.mode === "javascript") {
+			mode = "javascript";
+		} else if(options.mode === "css") {
+			mode = "css";
+		} else {
+			// markdown and fallback
+			mode = options.parsingConfig;
+			mode.name = "gfm";
+			mode.gitHubSpice = false;
+		}
 	}
 
 	this.codemirror = CodeMirror.fromTextArea(el, {
@@ -1724,7 +1756,7 @@ SimpleMDE.prototype.render = function(el) {
 		tabSize: (options.tabSize != undefined) ? options.tabSize : 2,
 		indentUnit: (options.tabSize != undefined) ? options.tabSize : 2,
 		indentWithTabs: (options.indentWithTabs === false) ? false : true,
-		lineNumbers: false,
+		lineNumbers: options.lineNumbers,
 		autofocus: (options.autofocus === true) ? true : false,
 		extraKeys: keyMaps,
 		lineWrapping: (options.lineWrapping === false) ? false : true,
@@ -2028,6 +2060,12 @@ SimpleMDE.prototype.createToolbar = function(items) {
 			bar.appendChild(buttonGroup);
 
 		})(items[index]);
+
+	}
+
+	// update toggleMarkdown title
+	if(toolbarData["toggleMarkdown"]) {
+		toolbarData["toggleMarkdown"].text = this.options.isMarkdown ? "M↓" : "M↑";
 	}
 
 	// for(i = 0; i < items.length; i++) {
@@ -2262,6 +2300,7 @@ SimpleMDE.togglePreview = togglePreview;
 SimpleMDE.toggleSideBySide = toggleSideBySide;
 SimpleMDE.toggleFullScreen = toggleFullScreen;
 SimpleMDE.toggleHtmlBlock = toggleHtmlBlock;
+SimpleMDE.toggleMarkdown = toggleMarkdown;
 
 /**
  * Bind instance methods for exports.
@@ -2331,6 +2370,10 @@ SimpleMDE.prototype.toggleSideBySide = function() {
 };
 SimpleMDE.prototype.toggleFullScreen = function() {
 	toggleFullScreen(this);
+};
+
+SimpleMDE.prototype.toggleMarkdown = function() {
+	toggleMarkdown(this);
 };
 
 SimpleMDE.prototype.toggleHtmlBlock = function(start_tag, end_tag) {
