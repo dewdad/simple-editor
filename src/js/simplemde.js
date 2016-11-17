@@ -961,7 +961,7 @@ function _toggleHeading(cm, direction, size, isMarkdown) {
 			if(!isMarkdown) {
 				var re = /<h([1-6])+>(.*?)<\/h([1-6])+>/i;
 				var match = text.match(re);
-				if(match.length >= 4) {
+				if(match) {
 					if(match[1] == match[3]) {
 						currHeadingLevel = parseInt(match[1], 10) + 1;
 						currHeadingLevel = currHeadingLevel > 6 ? 1 : currHeadingLevel;
@@ -1064,7 +1064,7 @@ function _toggleLine(cm, name, isMarkdown) {
 					var line = startPoint.line;
 					var text = cm.getLine(line);
 					var match = text.match(/<li>(.*?)<\/li>/i);
-					if(match.length >= 2) {
+					if(match) {
 						text = match[1];
 					} else {
 						text = "<li>" + text + "</li>";
