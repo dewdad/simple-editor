@@ -643,13 +643,42 @@ function drawLink(editor) {
 	var stat = getState(cm);
 	var options = editor.options;
 	var url = "http://";
-	if(options.promptURLs) {
-		url = prompt(options.promptTexts.link);
-		if(!url) {
-			return false;
+	var isUrl = false;
+
+	var text = _getSelectedText(cm, false);
+	if (_isUrl(text)) {
+		url = text;
+		isUrl = true;
+	}
+	else {
+		if(options.promptURLs) {
+			url = prompt(options.promptTexts.link);
+			if(!url) {
+				return false;
+			}
 		}
 	}
-	_replaceSelection(cm, stat.link, options.insertTexts.link, url);
+
+	if (!options.isMarkdown) {
+		var links = ['<a href="', url, '" title="">', text, '</a>'];
+		cm.replaceSelection(links.join(''));
+
+		var startPoint = cm.getCursor("start");
+		var line = startPoint.line;
+
+		if (isUrl) {
+			var offset = startPoint.ch - (links[3].length + links[4].length);
+			cm.setSelection({line: line, ch: offset}, {line: line, ch: (offset + text.length)});
+		}
+		else {
+			var offset = startPoint.ch - (links[1].length + links[2].length + links[3].length + links[4].length);
+			cm.setSelection({line: line, ch: offset}, {line: line, ch: (offset + url.length)});
+		}
+		cm.focus();
+	}
+	else {
+		_replaceSelection(cm, stat.link, options.insertTexts.link, url);
+	}
 }
 
 /**
@@ -666,7 +695,22 @@ function drawImage(editor) {
 			return false;
 		}
 	}
-	_replaceSelection(cm, stat.image, options.insertTexts.image, url);
+
+	if (!options.isMarkdown) {
+		var text = _getSelectedText(cm, false);
+		var links = ['<img src="', text, '" title="">'];
+		cm.replaceSelection(links.join(''));
+
+		var startPoint = cm.getCursor("start");
+		var line = startPoint.line;
+		var offset = startPoint.ch - (links[1].length + links[2].length);
+
+		cm.setSelection({line: line, ch: offset}, {line: line, ch: (offset + text.length)});
+		cm.focus();
+	}
+	else {
+		_replaceSelection(cm, stat.image, options.insertTexts.image, url);
+	}
 }
 
 /**
@@ -1139,6 +1183,24 @@ function _cleanBlock(cm) {
 			ch: 99999999999999
 		});
 	}
+}
+
+function _isUrl(url) {
+	 var re =/^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+	 if (re.test(url)) {
+		 return true;
+	 }
+	 return false;
+}
+
+function _getSelectedText(cm, selectLine) {
+	var text = cm.getSelection();
+	if (text === '' && selectLine === true) {
+		var startPoint = cm.getCursor("start");
+		text = cm.getLine(startPoint.line);
+		cm.setSelection({line: startPoint.line, ch: 0}, {line: startPoint.line, ch: text.length});
+	}
+	return text;
 }
 
 // Merge the properties of one object into another.
