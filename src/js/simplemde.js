@@ -96,8 +96,10 @@ function fixShortcut(name) {
  */
 function createIcon(options, enableTooltips, shortcuts) {
 	options = options || {};
-	var el = document.createElement("a");
+	options.type = (options.type == undefined) ? 'a' : options.type;
 	enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
+
+	var el = document.createElement(options.type);
 
 	if(options.title && enableTooltips) {
 		el.title = createTootlip(options.title, options.action, shortcuts);
@@ -110,6 +112,12 @@ function createIcon(options, enableTooltips, shortcuts) {
 
 	el.tabIndex = -1;
 	el.className = options.className;
+
+	if (options.buttonTitle) {
+		var text = document.createTextNode(options.buttonTitle);
+		el.appendChild(text);
+	}
+
 	return el;
 }
 
@@ -117,6 +125,12 @@ function createSep() {
 	var el = document.createElement("i");
 	el.className = "separator";
 	el.innerHTML = "|";
+	return el;
+}
+
+function createDivider() {
+	var el = document.createElement("div");
+	el.className = 'dropdown-divider';
 	return el;
 }
 
@@ -1670,60 +1684,177 @@ SimpleMDE.prototype.createToolbar = function(items) {
 	var toolbarData = {};
 	self.toolbar = items;
 
-	for(i = 0; i < items.length; i++) {
-		if(items[i].name == "guide" && self.options.toolbarGuideIcon === false)
-			continue;
-
-		if(self.options.hideIcons && self.options.hideIcons.indexOf(items[i].name) != -1)
-			continue;
-
-		// Fullscreen does not work well on mobile devices (even tablets)
-		// In the future, hopefully this can be resolved
-		if((items[i].name == "fullscreen" || items[i].name == "side-by-side") && isMobile())
-			continue;
-
-
-		// Don't include trailing separators
-		if(items[i] === "|") {
-			var nonSeparatorIconsFollow = false;
-
-			for(var x = (i + 1); x < items.length; x++) {
-				if(items[x] !== "|" && (!self.options.hideIcons || self.options.hideIcons.indexOf(items[x].name) == -1)) {
-					nonSeparatorIconsFollow = true;
-				}
-			}
-
-			if(!nonSeparatorIconsFollow)
-				continue;
-		}
-
-
-		// Create the icon and append to the toolbar
+	for (var index in items) {
 		(function(item) {
-			var el;
-			if(item === "|") {
-				el = createSep();
-			} else {
-				el = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
-			}
 
-			// bind events, special for info
-			if(item.action) {
-				if(typeof item.action === "function") {
-					el.onclick = function(e) {
-						e.preventDefault();
-						item.action(self);
-					};
-				} else if(typeof item.action === "string") {
-					el.href = item.action;
-					el.target = "_blank";
+			var buttonGroup = document.createElement('div');
+			if (item.title && self.options.toolbarTips) {
+				buttonGroup.title = createTootlip(item.title, null, null);
+			}
+			buttonGroup.tabIndex = -1;
+			buttonGroup.className = 'btn-group';
+
+			if (Array.isArray(item)) {
+
+				for (var i in item) {
+
+					(function(subItem) {
+						subItem.className = 'btn ' + subItem.className;
+						var el = createIcon(subItem, self.options.toolbarTips, self.options.shortcuts);
+
+						// bind events, special for info
+						if (subItem.action) {
+							if(typeof subItem.action === "function") {
+								el.onclick = function(e) {
+									e.preventDefault();
+									subItem.action(self);
+								};
+							}
+							else if(typeof subItem.action === "string") {
+								el.href = subItem.action;
+								el.target = "_blank";
+							}
+						}
+
+						toolbarData[subItem.name || subItem] = el;
+						buttonGroup.appendChild(el);
+
+					})(toolbarBuiltInButtons[item[i]]);
 				}
 			}
+			else if (item['dropdown'] !== undefined) {
+				// dropdown button
+				item.type = 'button';
+				item.className = 'btn dropdown-toggle ' + item.className;
+				var dropdownGroup = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
 
-			toolbarData[item.name || item] = el;
-			bar.appendChild(el);
-		})(items[i]);
+				var attr = document.createAttribute('data-toggle');
+				attr.value = 'dropdown';
+				dropdownGroup.setAttributeNode(attr);
+				buttonGroup.appendChild(dropdownGroup);
+
+				// create doopdown
+				var dropdown = document.createElement('div');
+				dropdown.className = 'dropdown-menu';
+
+				for (var subIndex in item['dropdown']) {
+					(function(subItem) {
+
+						var el;
+						if (subItem === '-' || subItem === '|') {
+							el = createDivider();
+						}
+						else {
+							subItem.className = subItem.className == '' ? 'dropdown-item' : subItem.className + ' dropdown-item';
+							el = createIcon(subItem, self.options.toolbarTips, self.options.shortcuts);
+
+							// bind events, special for info
+							if(subItem.action) {
+								if (typeof subItem.action === "function") {
+									el.onclick = function(e) {
+										e.preventDefault();
+										subItem.action(self);
+									};
+								}
+								else if(typeof subItem.action === "string") {
+									el.href = subItem.action;
+									el.target = "_blank";
+								}
+							}
+						}
+
+						toolbarData[subItem.name || subItem] = el;
+						dropdown.appendChild(el);
+
+					})(item['dropdown'][subIndex]);
+				}
+
+				buttonGroup.appendChild(dropdown);
+			}
+			else {
+				// regular button
+				item.className = 'btn ' + item.className;
+				var el = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
+
+				// bind events, special for info
+				if (item.action) {
+					if(typeof item.action === "function") {
+						el.onclick = function(e) {
+							e.preventDefault();
+							item.action(self);
+						};
+					}
+					else if(typeof item.action === "string") {
+						el.href = item.action;
+						el.target = "_blank";
+					}
+				}
+
+				toolbarData[item.name || item] = el;
+				buttonGroup.appendChild(el);
+			}
+
+			// toolbarData[item.name || item] = el;
+			bar.appendChild(buttonGroup);
+
+		})(items[index]);
+
 	}
+
+	// for(i = 0; i < items.length; i++) {
+	// 	if(items[i].name == "guide" && self.options.toolbarGuideIcon === false)
+	// 		continue;
+	//
+	// 	if(self.options.hideIcons && self.options.hideIcons.indexOf(items[i].name) != -1)
+	// 		continue;
+	//
+	// 	// Fullscreen does not work well on mobile devices (even tablets)
+	// 	// In the future, hopefully this can be resolved
+	// 	if((items[i].name == "fullscreen" || items[i].name == "side-by-side") && isMobile())
+	// 		continue;
+	//
+	//
+	// 	// Don't include trailing separators
+	// 	if(items[i] === "|") {
+	// 		var nonSeparatorIconsFollow = false;
+	//
+	// 		for(var x = (i + 1); x < items.length; x++) {
+	// 			if(items[x] !== "|" && (!self.options.hideIcons || self.options.hideIcons.indexOf(items[x].name) == -1)) {
+	// 				nonSeparatorIconsFollow = true;
+	// 			}
+	// 		}
+	//
+	// 		if(!nonSeparatorIconsFollow)
+	// 			continue;
+	// 	}
+	//
+	//
+	// 	// Create the icon and append to the toolbar
+	// 	(function(item) {
+	// 		var el;
+	// 		if(item === "|") {
+	// 			el = createSep();
+	// 		} else {
+	// 			el = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
+	// 		}
+	//
+	// 		// bind events, special for info
+	// 		if(item.action) {
+	// 			if(typeof item.action === "function") {
+	// 				el.onclick = function(e) {
+	// 					e.preventDefault();
+	// 					item.action(self);
+	// 				};
+	// 			} else if(typeof item.action === "string") {
+	// 				el.href = item.action;
+	// 				el.target = "_blank";
+	// 			}
+	// 		}
+	//
+	// 		toolbarData[item.name || item] = el;
+	// 		bar.appendChild(el);
+	// 	})(items[i]);
+	// }
 
 	self.toolbarElements = toolbarData;
 
