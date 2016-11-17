@@ -10,9 +10,19 @@ require("codemirror/addon/display/placeholder.js");
 require("codemirror/addon/selection/mark-selection.js");
 require("codemirror/mode/gfm/gfm.js");
 require("codemirror/mode/xml/xml.js");
+
+require("codemirror/addon/hint/show-hint.js");
+require("codemirror/addon/hint/css-hint.js");
 require("codemirror/mode/css/css.js");
-require("codemirror/mode/htmlmixed/htmlmixed.js");
+
+require("codemirror/addon/edit/matchbrackets.js");
+require("codemirror/addon/comment/continuecomment.js");
+require("codemirror/addon/comment/comment.js");
 require("codemirror/mode/javascript/javascript.js");
+
+require("codemirror/addon/selection/selection-pointer.js");
+require("codemirror/mode/htmlmixed/htmlmixed.js");
+
 var CodeMirrorSpellChecker = require("codemirror-spell-checker");
 var marked = require("marked");
 
