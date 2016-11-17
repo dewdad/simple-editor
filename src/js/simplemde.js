@@ -245,7 +245,9 @@ function toggleFullScreen(editor) {
  * Action for toggling bold.
  */
 function toggleBold(editor) {
-	_toggleBlock(editor, "bold", editor.options.blockStyles.bold);
+	var start_char = editor.options.isMarkdown ? editor.options.blockStyles.bold : '<strong>';
+	var end_char = editor.options.isMarkdown ? editor.options.blockStyles.bold : '</strong>';
+	_toggleBlock(editor, "bold", start_char, end_char);
 }
 
 
@@ -253,7 +255,9 @@ function toggleBold(editor) {
  * Action for toggling italic.
  */
 function toggleItalic(editor) {
-	_toggleBlock(editor, "italic", editor.options.blockStyles.italic);
+	var start_char = editor.options.isMarkdown ? editor.options.blockStyles.italic : '<em>';
+	var end_char = editor.options.isMarkdown ? editor.options.blockStyles.italic : '</em>';
+	_toggleBlock(editor, "italic", start_char, end_char);
 }
 
 
@@ -261,7 +265,9 @@ function toggleItalic(editor) {
  * Action for toggling strikethrough.
  */
 function toggleStrikethrough(editor) {
-	_toggleBlock(editor, "strikethrough", "~~");
+	var start_char = editor.options.isMarkdown ? '~~' : '<s>';
+	var end_char = editor.options.isMarkdown ? '~~' : '</s>';
+	_toggleBlock(editor, "strikethrough", start_char, end_char);
 }
 
 /**
