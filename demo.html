@@ -1,0 +1,325 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Demo</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+	<link rel="stylesheet" href="dist/simplemde.min.css" type="text/css" media="screen">
+
+	<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/tether.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+	<script src="dist/simplemde.min.js"></script>
+
+	<style>
+	body {
+		width: 80%;
+		margin: 4rem auto 0 auto;
+	}
+	h1 small { font-size: 1rem;}
+	h3 { margin: 1rem 0;}
+	textarea {
+		width: 100%;
+		height: 10rem;
+	}
+	.CodeMirror {
+		font-family: 'Inconsolata', monospace !important;
+	}
+	</style>
+</head>
+<body>
+
+<nav class="navbar navbar-fixed-top navbar-light bg-faded">
+	<a class="navbar-brand" href="./">SimpleMDE</a>
+	<ul class="nav navbar-nav">
+		<li class="nav-item"><a class="nav-link" href="https://github.com/ethanliu/simplemde-markdown-editor.git">Github</a></li>
+	</ul>
+</nav>
+
+
+<h4>Markup and orignal toolbar</h4>
+<div>
+	<textarea id="editor1" class="editor" data-editor-mode="html">
+<h3>Lorem ipsum dolor sit amet</h3>
+<li>consectetur adipisicing elit,</li>
+http://example.com/example.html
+
+* sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+
+ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+<style>
+body {
+	font: 75% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+}
+</style>
+<script>
+$(function() {
+	console.log('test');
+});
+</script>
+
+	</textarea>
+</div>
+
+<h4>Markdown and custom toolbar</h4>
+<div>
+	<textarea id="editor2" class="editor" data-editor-mode="markdown">
+<h3>Lorem ipsum dolor sit amet</h3>
+<li>consectetur adipisicing elit,</li>
+http://example.com/example.html
+
+* sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+
+ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+<style>
+body {
+	font: 75% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+}
+</style>
+<script>
+
+</script>
+	</textarea>
+</div>
+
+
+<h4>Javascript</h4>
+<div>
+<textarea class="editor" data-editor-mode="javascript">
+// Demo code (the actual new parser character stream implementation)
+
+function StringStream(string) {
+  this.pos = 0;
+  this.string = string;
+}
+
+StringStream.prototype = {
+  done: function() {return this.pos >= this.string.length;},
+  peek: function() {return this.string.charAt(this.pos);},
+  next: function() {
+    if (this.pos < this.string.length)
+      return this.string.charAt(this.pos++);
+  },
+  eat: function(match) {
+    var ch = this.string.charAt(this.pos);
+    if (typeof match == "string") var ok = ch == match;
+    else var ok = ch && match.test ? match.test(ch) : match(ch);
+    if (ok) {this.pos++; return ch;}
+  },
+  eatWhile: function(match) {
+    var start = this.pos;
+    while (this.eat(match));
+    if (this.pos > start) return this.string.slice(start, this.pos);
+  },
+  backUp: function(n) {this.pos -= n;},
+  column: function() {return this.pos;},
+  eatSpace: function() {
+    var start = this.pos;
+    while (/\s/.test(this.string.charAt(this.pos))) this.pos++;
+    return this.pos - start;
+  },
+  match: function(pattern, consume, caseInsensitive) {
+    if (typeof pattern == "string") {
+      function cased(str) {return caseInsensitive ? str.toLowerCase() : str;}
+      if (cased(this.string).indexOf(cased(pattern), this.pos) == this.pos) {
+        if (consume !== false) this.pos += str.length;
+        return true;
+      }
+    }
+    else {
+      var match = this.string.slice(this.pos).match(pattern);
+      if (match && consume !== false) this.pos += match[0].length;
+      return match;
+    }
+  }
+};
+</textarea>
+
+<h4>CSS</h4>
+<div>
+<textarea class="editor" data-editor-mode="css">
+body {
+	font: 75% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+}
+</textarea>
+
+<script>
+var buttons = [];
+
+buttons['html'] = [
+	'toggleMarkdown',
+	'bold',
+	'italic',
+	'strikethrough',
+	'heading',
+	'|',
+	'quote',
+	'code',
+	'unordered-list',
+	'ordered-list',
+	'|',
+	'link',
+	'image',
+	'table',
+	'horizontal-rule',
+	'|',
+	'preview',
+	'fullscreen',
+];
+
+buttons['markdown'] = [
+	'toggleMarkdown',
+	[
+		'heading',
+		'bold',
+		'italic',
+		'strikethrough',
+	],
+	[
+		'quote',
+		// 'code',
+		'unordered-list',
+		'ordered-list',
+	],
+	[
+		'link',
+		'image',
+		'table',
+		'horizontal-rule',
+	],
+	{
+		name: 'codes',
+		title: 'Codes',
+		className: 'fa fa-code',
+		dropdown: [
+			{
+				name: 'code',
+				title: 'Inline code',
+				buttonTitle: 'Inline code',
+				className: '',
+				action: SimpleMDE.toggleCodeBlock,
+			},
+			'-',
+			{
+				name: 'code-block',
+				title: 'Code block',
+				buttonTitle: 'Code block',
+				className: '',
+				action: function(editor) {
+					editor.toggleHtmlBlock('<pre><code>', '</code></pre>');
+				}
+			},
+			{
+				name: 'code-var',
+				title: 'Variables',
+				buttonTitle: 'Variables',
+				className: '',
+				action: function(editor) {
+					editor.toggleHtmlBlock('<var>', '</var>');
+				}
+			},
+			{
+				name: 'code-input',
+				title: 'User input',
+				buttonTitle: 'User input',
+				className: '',
+				action: function(editor) {
+					editor.toggleHtmlBlock('<kbd>', '</kbd>');
+				}
+			},
+			{
+				name: 'code-sample',
+				title: 'Sample output',
+				buttonTitle: 'Sample output',
+				className: '',
+				action: function(editor) {
+					editor.toggleHtmlBlock('<samp>', '</samp>');
+				}
+			},
+		]
+	},
+	'fullscreen',
+];
+
+buttons['javascript'] = [
+	{
+		name: 'onload',
+		title: 'jQuery.Ready',
+		buttonTitle: 'onReady',
+		className: '',
+		action: function(editor) {
+			var text = "$(function() {\n});";
+			editor.codemirror.replaceSelection(text);
+			editor.codemirror.focus();
+		}
+	}
+];
+
+buttons['css'] = [
+	{
+		name: 'body',
+		title: 'Sample CSS',
+		buttonTitle: 'sample',
+		className: '',
+		action: function(editor) {
+			var text = ".body {\n\tcolor: '#000';\n}\n";
+			editor.codemirror.replaceSelection(text);
+			editor.codemirror.focus();
+		}
+	}
+];
+
+$(function() {
+	$(".editor").each(function() {
+		var $editor = $(this);
+		var mode = $editor.data('editor-mode');
+
+		var simplemde = new SimpleMDE({
+			element: $editor[0],
+			mode: mode, // CodeMirror.options.mode
+			// autoDownloadFontAwesome: false,
+			// autosave: {
+			// 	enabled: false,
+			// 	delay: 1000, // 10s
+			// 	uniqueId: '',
+			// },
+			blockStyles: {
+				italic: '_',
+			},
+			toolbar: buttons[mode],
+			identWithTabs: true,
+			lineWrapping: true,
+			lineNumbers: true, // CodeMirror.options.lineNumbers
+			parsingConfig: {
+				allowAtxHeaderWtihoutSpace: true,
+			},
+			// insertTexts: {
+			// 	html_horizontalRule: "",
+			// 	html_table: "",
+			// },
+			renderingConfig: {
+				singleLineBreaks: true,
+				codeSyntaxHighlighting: false, // hightlight.js
+			},
+			spellChecker: false,
+			tabSize: 4,
+			toobarTips: true,
+		});
+
+	});
+});
+</script>
+
+
+</body>
+</html>
