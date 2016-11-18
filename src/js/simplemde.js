@@ -1074,10 +1074,13 @@ function _toggleLine(cm, name, isMarkdown) {
 					var line = startPoint.line;
 					var text = cm.getLine(line);
 					var match = text.match(/<li>(.*?)<\/li>/i);
+					var offset = 0;
 					if(match) {
 						text = match[1];
+						offset = -4;
 					} else {
 						text = "<li>" + text + "</li>";
+						offset = 4;
 					}
 					cm.replaceRange(text, {
 						line: line,
@@ -1087,7 +1090,8 @@ function _toggleLine(cm, name, isMarkdown) {
 						ch: 99999999999999
 					});
 
-					cm.setSelection(startPoint, endPoint);
+					// keep cursor position
+					cm.setSelection({line: startPoint.line, ch: startPoint.ch + offset});
 				} else {
 					for(var i = startPoint.line; i <= endPoint.line; i++) {
 						(function(i) {
@@ -1107,8 +1111,8 @@ function _toggleLine(cm, name, isMarkdown) {
 							});
 						})(i);
 					}
-					// insert ul,ol
 
+					// wrap ul,ol
 					var map = {
 						"unordered-list": "ul",
 						"ordered-list": "ol"
@@ -1119,6 +1123,8 @@ function _toggleLine(cm, name, isMarkdown) {
 						line: startPoint.line,
 						ch: 0
 					});
+					// move cursor to the end of block
+					cm.setSelection({line: endPoint.line + 2, ch: 99999999999999});
 				}
 			})();
 
