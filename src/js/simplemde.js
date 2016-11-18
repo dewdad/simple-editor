@@ -1,26 +1,25 @@
 /*global require,module*/
 "use strict";
 var CodeMirror = require("codemirror");
-require("codemirror/addon/edit/continuelist.js");
+
 require("./codemirror/tablist");
+require("codemirror/addon/comment/comment.js");
+require("codemirror/addon/comment/continuecomment.js");
 require("codemirror/addon/display/fullscreen.js");
-require("codemirror/mode/markdown/markdown.js");
-require("codemirror/addon/mode/overlay.js");
 require("codemirror/addon/display/placeholder.js");
+require("codemirror/addon/edit/continuelist.js");
+require("codemirror/addon/edit/matchbrackets.js");
+require("codemirror/addon/hint/css-hint.js");
+require("codemirror/addon/hint/show-hint.js");
 require("codemirror/addon/selection/mark-selection.js");
+require("codemirror/addon/selection/selection-pointer.js");
+
+require("codemirror/addon/mode/overlay.js");
+require("codemirror/mode/javascript/javascript.js");
+require("codemirror/mode/css/css.js");
 require("codemirror/mode/gfm/gfm.js");
 require("codemirror/mode/xml/xml.js");
-
-require("codemirror/addon/hint/show-hint.js");
-require("codemirror/addon/hint/css-hint.js");
-require("codemirror/mode/css/css.js");
-
-require("codemirror/addon/edit/matchbrackets.js");
-require("codemirror/addon/comment/continuecomment.js");
-require("codemirror/addon/comment/comment.js");
-require("codemirror/mode/javascript/javascript.js");
-
-require("codemirror/addon/selection/selection-pointer.js");
+require("codemirror/mode/markdown/markdown.js");
 require("codemirror/mode/htmlmixed/htmlmixed.js");
 
 var CodeMirrorSpellChecker = require("codemirror-spell-checker");
@@ -1091,7 +1090,10 @@ function _toggleLine(cm, name, isMarkdown) {
 					});
 
 					// keep cursor position
-					cm.setSelection({line: startPoint.line, ch: startPoint.ch + offset});
+					cm.setSelection({
+						line: startPoint.line,
+						ch: startPoint.ch + offset
+					});
 				} else {
 					for(var i = startPoint.line; i <= endPoint.line; i++) {
 						(function(i) {
@@ -1124,7 +1126,10 @@ function _toggleLine(cm, name, isMarkdown) {
 						ch: 0
 					});
 					// move cursor to the end of block
-					cm.setSelection({line: endPoint.line + 2, ch: 99999999999999});
+					cm.setSelection({
+						line: endPoint.line + 2,
+						ch: 99999999999999
+					});
 				}
 			})();
 
@@ -1762,7 +1767,7 @@ SimpleMDE.prototype.render = function(el) {
 	this.codemirror = CodeMirror.fromTextArea(el, {
 		mode: mode,
 		backdrop: backdrop,
-		theme: "paper",
+		theme: "neo",
 		tabSize: (options.tabSize != undefined) ? options.tabSize : 2,
 		indentUnit: (options.tabSize != undefined) ? options.tabSize : 2,
 		indentWithTabs: (options.indentWithTabs === false) ? false : true,
