@@ -760,7 +760,7 @@ function drawTable(editor) {
 	var options = editor.options;
 	if(!options.isMarkdown) {
 		var point = cm.getCursor("end");
-		cm.replaceRange(options.insertMarkups.table, {
+		cm.replaceRange(options.insertTexts.html_table, {
 			line: point.line,
 			ch: point.ch
 		});
@@ -783,7 +783,7 @@ function drawHorizontalRule(editor) {
 	var options = editor.options;
 	if(!options.isMarkdown) {
 		var point = cm.getCursor("end");
-		cm.replaceRange(options.insertMarkups.hr, {
+		cm.replaceRange(options.insertTexts.html_horizontalRule, {
 			line: point.line,
 			ch: point.ch
 		});
@@ -1502,16 +1502,13 @@ var toolbarBuiltInButtons = {
 	}
 };
 
-var insertMarkups = {
-	table: "\n<table class=\"table table-striped table-bordered table-hover table-sm\">\n<tr>\n\t<th></th>\n\t<th></th>\n\t<th></th>\n</tr>\n<tr>\n\t<td></td>\n\t<td></td>\n\t<td></td>\n</tr>\n</table>\n",
-	hr: "\n<hr>\n"
-};
-
 var insertTexts = {
 	link: ["[", "](#url#)"],
 	image: ["![](", "#url#)"],
 	table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n"],
-	horizontalRule: ["", "\n\n-----\n\n"]
+	horizontalRule: ["", "\n\n-----\n\n"],
+	html_table: "\n<table class=\"table table-striped table-bordered table-hover table-sm\">\n<tr>\n\t<th></th>\n\t<th></th>\n\t<th></th>\n</tr>\n<tr>\n\t<td></td>\n\t<td></td>\n\t<td></td>\n</tr>\n</table>\n",
+	html_hr: "\n<hr>\n"
 };
 
 var promptTexts = {
@@ -1616,9 +1613,6 @@ function SimpleMDE(options) {
 		highlightFormatting: true // needed for toggleCodeBlock to detect types of code
 	}, options.parsingConfig || {});
 
-
-	// Merging the insertMarkups, with the given options
-	options.insertMarkups = extend({}, insertMarkups, options.insertMarkups || {});
 
 	// Merging the insertTexts, with the given options
 	options.insertTexts = extend({}, insertTexts, options.insertTexts || {});
