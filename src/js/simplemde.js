@@ -2001,7 +2001,7 @@ SimpleMDE.prototype.createToolbar = function(items) {
 						toolbarData[subItem.name || subItem] = el;
 						buttonGroup.appendChild(el);
 
-					})(toolbarBuiltInButtons[item[i]]);
+					})(toolbarBuiltInButtons[item[i]] || item[i]);
 				}
 			} else if(item["dropdown"] !== undefined) {
 				// dropdown button
