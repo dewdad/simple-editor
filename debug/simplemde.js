@@ -19133,7 +19133,7 @@ function _toggleLine(cm, name, isMarkdown) {
 
 	if(!isMarkdown) {
 		if(name === "quote") {
-			_replaceSelection(cm, false, ["<quoteblock>", "</quoteblock>"]);
+			_replaceSelection(cm, false, ["<blockquote><p>", "</p><cite>Someone</cite></blockquote>"]);
 		} else if(name.indexOf("-list") !== -1) {
 
 			(function() {
