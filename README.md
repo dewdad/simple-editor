@@ -1,11 +1,15 @@
-# a fork of SimpleMDE
+# SimpleEditor
 
-# SimpleMDE - Markdown Editor
-A drop-in JavaScript textarea replacement for writing beautiful and understandable Markdown. The WYSIWYG-esque editor allows users who may be less experienced with Markdown to use familiar toolbar buttons and shortcuts. In addition, the syntax is rendered while editing to clearly show the expected result. Headings are larger, emphasized words are italicized, links are underlined, etc. SimpleMDE is one of the first editors to feature both built-in autosaving and spell checking.
+A drop-in JavaScript textarea replacement for writing Markdown, HTML, javascript, CSS.
 
-## Major changes
-* Toolbar with bootstrap style and support dropdown button, require Bootstrap4
-* Allows to toggle between Markdown and HTML edting mode
+SimpleEditor is based on [SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor) with the following features:
 
+- Bootstrap4 (beta)
+- Toolbar style and dropdown button
+- Allows to toggle between Markdown and HTML editing mode
+
+## Why not a WYSIWYG editor or pure Markdown?
+
+WYSIWYG editors are messes, however Markdown is not enough for advanced HTML usage when you need more attributes or custom.
 
 
