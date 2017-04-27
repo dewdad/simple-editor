@@ -4,8 +4,7 @@ A drop-in JavaScript textarea replacement for writing Markdown, HTML, javascript
 
 SimpleEditor is based on [SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor) with the following features:
 
-- Bootstrap4 (beta)
-- Toolbar style and dropdown button
+- Toolbar dropdown buttons
 - Allows to toggle between Markdown and HTML editing mode
 
 ## Why not a WYSIWYG editor or pure Markdown?

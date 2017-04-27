@@ -27,6 +27,7 @@
 		width: 100vw;
 		height: 3rem;
 		padding: 0 10%;
+		z-index: 10;
 	}
 	.navbar * {
 		display: inline-block;
@@ -52,7 +53,6 @@
 <nav class="navbar">
 	<a href="./">SimpleEditor</a>
 	<a href="demo.html">Demo</a>
-	<a href="html.html">HTML</a>
 	<a href="https://github.com/ethanliu/simple-editor.git">Github</a>
 </nav>
 
@@ -302,7 +302,7 @@ $(function() {
 		var $editor = $(this);
 		var mode = $editor.data('editor-mode');
 
-		var simplemde = new SimpleMDE({
+		var editor = new SimpleMDE({
 			element: $editor[0],
 			mode: mode, // CodeMirror.options.mode
 			// autoDownloadFontAwesome: false,
