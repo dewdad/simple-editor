@@ -18205,12 +18205,12 @@ function createIcon(options, enableTooltips, shortcuts) {
 	return el;
 }
 
-// function createSep() {
-// 	var el = document.createElement("i");
-// 	el.className = "separator";
-// 	el.innerHTML = "|";
-// 	return el;
-// }
+function createSep() {
+	var el = document.createElement("i");
+	el.className = "separator";
+	el.innerHTML = "|";
+	return el;
+}
 
 function createDivider() {
 	var el = document.createElement("div");
@@ -20046,14 +20046,14 @@ SimpleMDE.prototype.createToolbar = function(items) {
 				buttonGroup.title = createTootlip(item.title, null, null);
 			}
 			buttonGroup.tabIndex = -1;
-			buttonGroup.className = "btn-group";
+			buttonGroup.className = "toolbar-group";
 
 			if(Array.isArray(item)) {
 
 				for(var i in item) {
 
 					(function(subItem) {
-						subItem.className = "btn " + subItem.className;
+						// subItem.className = "btn " + subItem.className;
 						var el = createIcon(subItem, self.options.toolbarTips, self.options.shortcuts);
 
 						// bind events, special for info
@@ -20076,8 +20076,8 @@ SimpleMDE.prototype.createToolbar = function(items) {
 				}
 			} else if(item["dropdown"] !== undefined) {
 				// dropdown button
-				item.type = "button";
-				item.className = "btn dropdown-toggle " + item.className;
+				item.type = "a";
+				item.className = "dropdown-toggle " + item.className;
 				var dropdownGroup = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
 
 				var attr = document.createAttribute("data-toggle");
@@ -20087,7 +20087,7 @@ SimpleMDE.prototype.createToolbar = function(items) {
 
 				// create doopdown
 				var dropdown = document.createElement("div");
-				dropdown.className = "dropdown-menu";
+				dropdown.className = "dropdown-container";
 
 				for(var subIndex in item["dropdown"]) {
 					(function(subItem) {
@@ -20120,9 +20120,11 @@ SimpleMDE.prototype.createToolbar = function(items) {
 				}
 
 				buttonGroup.appendChild(dropdown);
+			} else if(item === "|") {
+				bar.appendChild(createSep());
 			} else {
 				// regular button
-				item.className = "btn " + item.className;
+				// item.className = "btn " + item.className;
 				var el = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
 
 				// bind events, special for info
