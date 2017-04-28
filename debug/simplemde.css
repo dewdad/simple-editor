@@ -1,6 +1,5 @@
 /**
- * simple-editor v1.1.0
- * Copyright 
+ * simple-editor v1.11.2
  * @link https://github.com/ethanliu/simple-editor.git
  * @license MIT
  */
