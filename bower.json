@@ -12,7 +12,7 @@
 		"embeddable",
 		"markdown",
 		"html",
-		"css"
+		"css",
 		"editor",
 		"javascript",
 		"wysiwyg"
