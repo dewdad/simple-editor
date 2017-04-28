@@ -1,9 +1,10 @@
 {
 	"name": "simple-editor",
-	"version": "1.1.0",
+	"version": "1.11.2",
 	"homepage": "https://github.com/ethanliu/simple-editor.git",
 	"authors": [
-		"Ethan Liu <https://creativecrap.com>"
+		"Ethan Liu <https://creativecrap.com>",
+		"Wes Cossick <https://wescossick.com>"
 	],
 	"description": "A simple, beautiful, and embeddable JavaScript editor based on SimpleMDE v1.11.2.",
 	"main": ["src/js/simplemde.js", "src/css/simplemde.css"],

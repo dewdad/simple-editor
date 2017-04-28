@@ -1,10 +1,12 @@
 {
   "name": "simple-editor",
-  "version": "1.1.0",
+  "version": "1.11.2",
   "description": "A simple, beautiful, and embeddable JavaScript editor based on SimpleMDE v1.11.2.",
   "keywords": [
     "embeddable",
     "markdown",
+    "html",
+    "ccs",
     "editor",
     "javascript",
     "wysiwyg"
@@ -12,14 +14,14 @@
   "homepage": "https://github.com/ethanliu/simple-editor.git",
   "main": "./src/js/simple-editor.js",
   "license": "MIT",
-  "company": "",
+  "company": "Next Step Webs, Inc.",
   "author": {
-    "name": "",
-    "url": ""
+    "name": "Wes Cossick",
+    "url": "http://www.WesCossick.com"
   },
-  "bugs": {
-    "url": "https://github.com/ethanliu/simple-editor.git/issues"
-  },
+  "contributors": [
+      "Ethan Liu <ethan@creativecrap.com> (https://creativecrap.com)"
+  ],
   "dependencies": {
     "codemirror": "*",
     "codemirror-spell-checker": "*",
