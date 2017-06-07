@@ -20079,9 +20079,11 @@ SimpleMDE.prototype.createToolbar = function(items) {
 				item.className = "dropdown-toggle " + item.className;
 				var dropdownGroup = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
 
-				var attr = document.createAttribute("data-toggle");
-				attr.value = "dropdown";
-				dropdownGroup.setAttributeNode(attr);
+				// var attr = document.createAttribute("data-toggle");
+				// attr.value = "dropdown";
+				// dropdownGroup.setAttributeNode(attr);
+				//Use of setAttributeNode() is deprecated. Use setAttribute() instead
+				dropdownGroup.setAttribute("data-toggle", "dropdown");
 				buttonGroup.appendChild(dropdownGroup);
 
 				// create doopdown
